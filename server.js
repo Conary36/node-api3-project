@@ -33,12 +33,12 @@ server.use('/api/posts', userRouter);
 // }
 function logger(req, res, next) {
   //log information about the request to the console
-  console.log(`[${new Date().toISOString()}] ${req.method} to ${req.url} ${req.get('Origin')}`)
+  //console.log(`[${new Date().toISOString()}] ${req.method} to ${req.url} ${req.get('Origin')}`)
 
-  // const method = req.method;
-  // const endpoint = req.originalUrl;
+  const method = req.method;
+  const endpoint = req.originalUrl;
 
-  // console.log(`${method} to ${endpoint}`);
+   console.log(`${method} to ${endpoint}`);
   next();//moves request to next middleware
 }
 
