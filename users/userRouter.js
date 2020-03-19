@@ -2,7 +2,7 @@ const express = require('express');
 const coolRouter = require('./userDb')
 const router = express.Router();
 
-router.post('/', validateUser, (req, res) => {
+router.post('/', validatePost, (req, res) => {
   // do your magic!
   const name = req.body;
   !name ? res.status(400).json({ success: false, errorMessage: "Please provide name!" }) :
@@ -20,7 +20,7 @@ router.post('/', validateUser, (req, res) => {
             })
 });
 
-router.post('/:id/posts', (req, res) => {
+router.post('/:id/posts',validatePost, (req, res) => {
   // do your magic!
   const {user_id, text} = req.body;
   !user_id ? res.status(404).json({ success: false, errorMessage: "The post with the specified ID does not exist." }) :
@@ -85,7 +85,7 @@ router.get('/:id', validateUserId, (req, res) => {
             })
 });
 
-router.get('/:id/posts', (req, res) => {
+router.get('/:id/posts', validatePost, (req, res) => {
   // do your magic!
   const {id} = req.params;
   !id ? res.status(404).json({ success: false, errorMessage: "The post with the specified ID does not exist." }) :
@@ -187,7 +187,16 @@ function validateUser(req, res, next) {
 
 function validatePost(req, res, next) {
   // do your magic!
-  const 
+  const {text} = req.body;
+  coolRouter.getUserPosts(text)
+            .then(data =>{
+              if(data !== text){
+                res.status(400).json({message: "missing post data"})
+              }else{
+                res.status(400).json({message: "missing required text field"})
+              }
+              next();
+            })
 }
 
 module.exports = router;
