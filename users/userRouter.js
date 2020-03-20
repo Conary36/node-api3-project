@@ -70,7 +70,6 @@ router.get('/', (req, res) => {
 router.get('/:id', validateUserId, (req, res) => {
   // do your magic!
   const {id} = req.params;
-  !id ? res.status(404).json({ success: false, errorMessage: "The user with the specified ID does not exist." }) :
   coolRouter.getById(id)
             .then(data =>{
                 res.status(200).json(data)
