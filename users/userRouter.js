@@ -1,12 +1,11 @@
 const express = require('express');
 const coolRouter = require('./userDb')
+const hotRouter = require('../posts/postDb')
 const router = express.Router();
 
-router.post('/', validatePost, (req, res) => {
+router.post('/', validateUser, (req, res) => {
   // do your magic!
-  const name = req.body;
-  !name ? res.status(400).json({ success: false, errorMessage: "Please provide name!" }) :
-  coolRouter.insert(name)
+  coolRouter.insert(req.body)
             .then(subj =>{
                 console.log('Name added', subj)
                 res.status(201).json(subj);
@@ -20,25 +19,27 @@ router.post('/', validatePost, (req, res) => {
             })
 });
 
-router.post('/:id/posts',validatePost, (req, res) => {
+router.post('/:id/posts', validateUserId, validatePost, (req, res) => {
   // do your magic!
-  const {user_id, text} = req.body;
-  !user_id ? res.status(404).json({ success: false, errorMessage: "The post with the specified ID does not exist." }) :
-  coolRouter.insert({user_id,text})
+  const {text} = req.body;
+  const user_id = req.params.id
+  coolRouter.getById(user_id)
             .then(data =>{
-              if(data){
-                  res.status(201).json({user_id, text})
+              if(!data){
+                 null
               }else{
-                null
+                let newPost = {
+                  text, user_id,
+                }
+                hotRouter.insert(newPost)
+                         .then(post =>{
+                           console.log(post)
+                           res.status(201).json(post)
+                         })
               }
             })
-            .catch(err =>{
-              if(!text){
-                  res.status(400).json({
-                    success: false, errorMessage: "Please provide text for the post.",err
-                  })
-              }else{
-                console.log(error);
+            .catch(error =>{
+              console.log(error);
                 res 
                     .status(500)
                     .json({
@@ -46,11 +47,10 @@ router.post('/:id/posts',validatePost, (req, res) => {
                       errorMessage:
                         "There was an error while saving the post"
                  })
-              }
             })
-});
 
-router.get('/', validateUser, (req, res) => {
+})
+router.get('/', (req, res) => {
   // do your magic!
   coolRouter.get(req.query)
             .then(data =>{
@@ -85,13 +85,18 @@ router.get('/:id', validateUserId, (req, res) => {
             })
 });
 
-router.get('/:id/posts', validatePost, (req, res) => {
+router.get('/:id/posts', validateUserId, (req, res) => {
   // do your magic!
   const {id} = req.params;
-  !id ? res.status(404).json({ success: false, errorMessage: "The post with the specified ID does not exist." }) :
+  
   coolRouter.getUserPosts(id)
             .then(data =>{
+              if(data){
                 res.status(200).json(data)
+              }else{
+                null
+              }
+                
             })
             .catch(err =>{
                 res
@@ -160,7 +165,6 @@ function validateUserId(req, res, next) {
          .then(data =>{
            if(data){
              req.data;
-
            }else{
              res.status(400).json({message: 'Invalid User'})
            }
@@ -173,30 +177,32 @@ function validateUserId(req, res, next) {
 
 function validateUser(req, res, next) {
   // do your magic!
-  const {name} = req.body;
-  coolRouter.get(name)
-            .then(data =>{
-              if(data !== name){
+  const userBody = req.body;
+  //coolRouter.get(name)
+            //.then(data =>{
+              if(Object.keys(userBody).length === 0){
                 res.status(400).json({message: "missing user data" })
-              }else{
+              }else if(!userBody.name){
                 res.status(400).json({ message: "missing required name field"})
-              }
+              }else{
               next();
-            })
+              }
+            //})
 }
 
 function validatePost(req, res, next) {
   // do your magic!
   const {text} = req.body;
-  coolRouter.getUserPosts(text)
-            .then(data =>{
-              if(data !== text){
+  //coolRouter.getUserPosts(text)
+           // .then(data =>{
+              if(Object.keys(req.body).length === 0){
                 res.status(400).json({message: "missing post data"})
-              }else{
+              }else if(!text){
                 res.status(400).json({message: "missing required text field"})
-              }
+              }else{
               next();
-            })
+              }
+           // })
 }
 
 module.exports = router;

@@ -2,6 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const helmet = require('helmet');
 const userRouter = require('./users/userRouter.js');
+const postRouter = require('./posts/postRouter.js')
 const server = express();
 
 //global middleware
@@ -10,7 +11,7 @@ server.use(helmet());
 server.use(morgan('dev'));//third-party middleware, needs to be installed
 server.use(logger);
 server.use('/api/users', userRouter);
-server.use('/api/posts', userRouter);
+server.use('/api/posts', postRouter);
 //server.use(addName);
 
 // server.get('/', addName, (req, res) => {
