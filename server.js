@@ -35,10 +35,8 @@ server.use('/api/posts', postRouter);
 function logger(req, res, next) {
   //log information about the request to the console
   //console.log(`[${new Date().toISOString()}] ${req.method} to ${req.url} ${req.get('Origin')}`)
-
   const method = req.method;
   const endpoint = req.originalUrl;
-
    console.log(`${method} to ${endpoint}`);
   next();//moves request to next middleware
 }
