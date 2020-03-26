@@ -5,12 +5,13 @@ import {axiosWithAuth} from '../utilities/axiosWithAuth';
 const initialUser = {
     name: ""
 }
-const Users = ({name}) => {
+const Users = ({names}) => {
+    console.log(names);
     const [editing, setEditing] = useState(false);
     const [userName, setUserName] = useState(initialUser);
     const [newName, setNewName] = useState(initialUser);
 
-    const createName = name => {
+    const editName = name => {
          setEditing(true);
          setUserName(name);
     }
@@ -47,11 +48,29 @@ const Users = ({name}) => {
             })
             .catch(err => console.log("Try again!"))
     }
+    console.log(names);
     return(
         <div>
-        
+            <h1>Users</h1>
+            <ul>
+            {names.map(name =>(
+                <li key={name.name} onClick={() => editName(name)}>
+                <span>
+                    <span onClick={e =>{
+                        e.stopPropagation();
+                        deleteName(name)
+                    }}>X</span>{" "}
+                    {name.name}
+                </span>
+                
+                </li>
+            ))}
+            </ul>
+            <button>BUTTON</button>
         
         </div>
     )
 
 }
+
+export default Users;

@@ -5,6 +5,7 @@ import Posts from '../Posts';
 import Logo from '../../images/cheburashka-64.png';
 import {Navbar, NavbarBrand, Nav, NavItem, Button} from 'reactstrap';
 import { useHistory } from 'react-router-dom';
+import UserPage from '../UserPage';
 
 const Navigation = () =>{
         const lastPosition = useHistory();
@@ -17,14 +18,10 @@ const Navigation = () =>{
                 <img src={Logo}/>
               </NavbarBrand>
               <Nav>
-                <Link to="/">Users</Link>
+                <Link to="/">User Page</Link>
                 <Link to="/posts">Posts</Link>
               </Nav>
-              <div>
-                <Route exact path="/" component={Users}/>
-                <Route path="/posts" component={Posts}/>
-              
-              </div>
+          
             </Navbar>
           </div>
         );
